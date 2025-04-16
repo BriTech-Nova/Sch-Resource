@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Button, Card, Container, Table, Badge, Modal, Form } from 'react-bootstrap';
-import { FaCheck, FaTimes, FaTools, FaInfoCircle } from 'react-icons/fa';
+import { Button, Card, Container, Table, Badge, Modal, Form, Alert, Spinner } from 'react-bootstrap';
+import { FaCheck, FaTimes, FaInfoCircle } from 'react-icons/fa'; // Removed unused FaTools
 import axios from 'axios';
 
 interface LabBooking {
@@ -100,9 +100,7 @@ const LabManagement: React.FC = () => {
             
             {loading ? (
               <div className="text-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+                <Spinner animation="border" variant="primary" />
               </div>
             ) : (
               <div className="table-responsive">

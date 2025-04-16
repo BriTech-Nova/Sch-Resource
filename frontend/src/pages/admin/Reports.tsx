@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Container, Row, Col, Table, Spinner } from 'react-bootstrap';
-import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Container, Spinner, Alert, Card, Table } from 'react-bootstrap';
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import api from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
 
 interface ReportData {
   name: string;
@@ -21,7 +19,6 @@ interface Activity {
 }
 
 const Reports: React.FC = () => {
-  const { user } = useAuth();
   const [reportData, setReportData] = useState<ReportData[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +34,7 @@ const Reports: React.FC = () => {
         ]);
         setReportData(reportRes.data);
         setActivities(activitiesRes.data);
+        setError(''); // Clear error after successful fetch
       } catch (err) {
         setError('Failed to fetch report data');
         console.error(err);
@@ -64,9 +62,81 @@ const Reports: React.FC = () => {
     );
   }
 
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
   return (
     <Container className="py-4 fade-in">
-      {/* ... rest of the component remains the same, just use reportData and activities from state ... */}
+      <Card className="mb-4">
+        <Card.Header>
+          <h3>Request Status Summary</h3>
+        </Card.Header>
+        <Card.Body>
+          {reportData.length > 0 ? (
+            <PieChart width={400} height={400}>
+              <Pie
+                data={reportData}
+                dataKey="fulfilled"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={150}
+                fill="#8884d8"
+                label
+              >
+                {reportData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          ) : (
+            <div className="text-center py-4">
+              <p>No data available for the chart</p>
+            </div>
+          )}
+        </Card.Body>
+      </Card>
+
+      <Card>
+        <Card.Header>
+          <h3>Recent Activities</h3>
+        </Card.Header>
+        <Card.Body>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>User</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {activities.map(activity => (
+                <tr key={activity.id}>
+                  <td>{activity.action}</td>
+                  <td>{activity.user}</td>
+                  <td>{new Date(activity.date).toLocaleString()}</td>
+                  <td>
+                    <span
+                      className={`badge bg-${
+                        activity.status === 'completed'
+                          ? 'success'
+                          : activity.status === 'pending'
+                          ? 'warning'
+                          : 'danger'
+                      }`}
+                    >
+                      {activity.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };

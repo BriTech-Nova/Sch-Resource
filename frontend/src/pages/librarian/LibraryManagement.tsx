@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button, Card, Container, Table, Badge, Modal, Form, Alert, Tab, Tabs } from 'react-bootstrap';
-import { FaBook, FaUser, FaSearch, FaCheck, FaTimes, FaExchangeAlt } from 'react-icons/fa';
+import { FaBook, FaUser, FaSearch, FaExchangeAlt } from 'react-icons/fa';
 import axios from 'axios';
 
 interface Book {
@@ -31,7 +30,6 @@ const LibraryManagement: React.FC = () => {
   const [error, setError] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBorrowModal, setShowBorrowModal] = useState(false);
-  const [showReturnModal, setShowReturnModal] = useState(false);
   const [currentBook, setCurrentBook] = useState<Book | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
@@ -126,7 +124,7 @@ const LibraryManagement: React.FC = () => {
     }
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -134,7 +132,7 @@ const LibraryManagement: React.FC = () => {
     }));
   };
 
-  const handleBorrowFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleBorrowFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setBorrowFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -179,7 +177,7 @@ const LibraryManagement: React.FC = () => {
                   type="text"
                   placeholder="Search books by title, author or ISBN..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                 />
               </div>
             </div>
